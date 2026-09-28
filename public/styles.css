@@ -65,7 +65,8 @@ a { color: var(--mint); }
   height: auto;
   pointer-events: none;
 }
-.hero.compact { padding-bottom: clamp(150px, 20vw, 290px); }
+.hero.compact { padding-bottom: max(210px, 26vw); }
+.hero.compact .hero-copy { padding-top: 16px; }
 .hero.compact .scene { width: max(100%, 700px); }
 
 .waves {
@@ -131,7 +132,7 @@ h1 em {
 }
 .hero p.lede { font-size: 1.15rem; color: var(--plum-2); max-width: 600px; margin: 0 auto 28px; }
 .hero .meta { color: var(--plum-2); }
-.hero h2 { color: var(--plum); margin: 24px 0 4px; font-size: clamp(2rem, 5vw, 3rem); }
+.hero h2 { color: var(--plum); background: none; margin: 12px auto 4px; font-size: clamp(2rem, 5vw, 3rem); }
 
 .countdown { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 .countdown div {

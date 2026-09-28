@@ -6,36 +6,39 @@
   <title>The 100% Chain</title>
   <meta name="description" content="Be the first to hit 100% completion on stream and win a custom gold and diamond pendant.">
   <link rel="stylesheet" href="/styles.css">
+  <script src="/age-gate.js"></script>
 </head>
 <body>
-  <div class="wrap">
-    <nav>
-      <a class="brand" href="/">THE 100% CHAIN</a>
-      <div class="links">
-        <a href="/" aria-current="page">Enter</a>
-        <a href="/leaderboard.html">Leaderboard</a>
-        <a href="/rules.html">Rules</a>
-      </div>
-    </nav>
-  </div>
-
   <header class="hero">
     <div class="wrap">
-      <div class="eyebrow">Free to enter · PS5 &amp; Xbox Series X|S</div>
-      <h1>First to 100%<br>wins the chain.</h1>
-      <p class="lede">
-        A custom gold and diamond pendant goes to the first player who reaches 100% completion
-        in Grand Theft Auto VI, live on stream.
-      </p>
-      <div class="countdown" id="countdown" aria-label="Countdown to launch">
-        <div><strong data-unit="d">--</strong><span>Days</span></div>
-        <div><strong data-unit="h">--</strong><span>Hours</span></div>
-        <div><strong data-unit="m">--</strong><span>Min</span></div>
-        <div><strong data-unit="s">--</strong><span>Sec</span></div>
+      <nav>
+        <a class="brand" href="/">THE 100% CHAIN</a>
+        <div class="links">
+          <a href="/" aria-current="page">Enter</a>
+          <a href="/leaderboard.html">Leaderboard</a>
+          <a href="/rules.html">Rules</a>
+        </div>
+      </nav>
+
+      <div class="hero-copy">
+        <div class="eyebrow">Free to enter · PS5 &amp; Xbox Series X|S · 18+</div>
+        <h1>First to 100%<br>wins the <em>chain.</em></h1>
+        <p class="lede">
+          A custom gold and diamond pendant goes to the first player who reaches 100% completion
+          in Grand Theft Auto VI, live on stream.
+        </p>
+        <div class="countdown" id="countdown" aria-label="Countdown to launch">
+          <div><strong data-unit="d">--</strong><span>Days</span></div>
+          <div><strong data-unit="h">--</strong><span>Hours</span></div>
+          <div><strong data-unit="m">--</strong><span>Min</span></div>
+          <div><strong data-unit="s">--</strong><span>Sec</span></div>
+        </div>
+        <p class="meta" id="countdown-label">until launch, November 19, 2026</p>
+        <p><a class="btn" href="#enter">Enter the challenge</a></p>
       </div>
-      <p class="meta" id="countdown-label">until launch, November 19, 2026</p>
-      <p><a class="btn" href="#enter">Enter the challenge</a></p>
     </div>
+    <img class="scene" src="/scene.svg" alt="" width="1600" height="510">
+    <div class="waves" aria-hidden="true"><i></i><i></i><i></i></div>
   </header>
 
   <main class="wrap">
@@ -53,7 +56,7 @@
       <div>
         <h2>Enter the challenge</h2>
         <p class="meta">
-          Entry is free. No purchase necessary. Open to players 18 and older.
+          Entry is free. No purchase necessary. Open to players 18 and older. The winner must show government-issued photo ID before the prize ships.
           Your name and email are kept private. Only your gamertag, platform, stream link and progress
           appear on the <a href="/leaderboard.html">public leaderboard</a>.
         </p>
@@ -73,6 +76,12 @@
           <label for="email">Email</label>
           <input id="email" name="email" type="email" autocomplete="email" required>
           <div class="error" data-for="email"></div>
+        </div>
+        <div class="field">
+          <label for="dob">Date of birth</label>
+          <input id="dob" name="dob" type="date" autocomplete="bday" required min="1900-01-01">
+          <div class="hint">You must be 18 or older. The winner shows photo ID before the prize ships.</div>
+          <div class="error" data-for="dob"></div>
         </div>
         <fieldset class="field">
           <legend>Platform</legend>
@@ -153,6 +162,7 @@
       const body = {
         name: fd.get("name"),
         email: fd.get("email"),
+        dob: fd.get("dob"),
         platform: fd.get("platform") ?? "",
         gamertag: fd.get("gamertag"),
         streamUrl: fd.get("streamUrl"),
