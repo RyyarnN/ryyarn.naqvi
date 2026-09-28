@@ -10,6 +10,20 @@ const GAMERTAG_RULES = {
   xbox: /^[A-Za-z0-9 ]{1,15}$/,
 };
 
+export const MIN_AGE = 18;
+
+// Whole years between a YYYY-MM-DD date of birth and `now`, or null if the date is invalid.
+export function ageOn(dob, now = new Date()) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dob);
+  if (!match) return null;
+  const [y, m, d] = match.slice(1).map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  if (date.getUTCMonth() !== m - 1 || date.getUTCDate() !== d || date > now) return null;
+  let age = now.getUTCFullYear() - y;
+  if (now.getUTCMonth() + 1 < m || (now.getUTCMonth() + 1 === m && now.getUTCDate() < d)) age--;
+  return age;
+}
+
 export function entrantKey(platform, gamertag) {
   return `${platform}:${gamertag.trim().toLowerCase().replace(/\s+/g, "_")}`;
 }
@@ -35,6 +49,8 @@ export function validateSignup(input) {
   const platform = str("platform").toLowerCase();
   const gamertag = str("gamertag");
   const streamUrl = str("streamUrl");
+  const dob = str("dob");
+  const age = ageOn(dob);
 
   if (name.length < 2 || name.length > 80) errors.name = "Enter your full name.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254)
@@ -47,7 +63,9 @@ export function validateSignup(input) {
         : "Xbox gamertags are up to 15 letters, numbers or spaces.";
   if (!isStreamUrl(streamUrl))
     errors.streamUrl = "Link your Twitch, YouTube or Kick channel (https://…).";
-  if (input.over18 !== true) errors.over18 = "You must be 18 or older to enter.";
+  if (age === null || age > 120) errors.dob = "Enter your date of birth.";
+  else if (age < MIN_AGE) errors.dob = `You must be ${MIN_AGE} or older to enter.`;
+  if (input.over18 !== true) errors.over18 = "You must confirm you are 18 or older.";
   if (input.acceptRules !== true) errors.acceptRules = "You must accept the official rules.";
   if (input.publicProfile !== true)
     errors.publicProfile = "Your trophies/achievements must be public so we can track progress.";
@@ -61,6 +79,8 @@ export function validateSignup(input) {
       platform,
       gamertag,
       streamUrl,
+      dob,
+      ageAttestedAt: new Date().toISOString(), // when they confirmed 18+ and submitted a DOB
       createdAt: new Date().toISOString(),
       progress: null, // filled in by sync-progress
     },
