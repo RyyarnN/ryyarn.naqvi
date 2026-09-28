@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leaderboard · The 100% Chain</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="/">THE 100% CHAIN</a>
+      <div class="links">
+        <a href="/">Enter</a>
+        <a href="/leaderboard.html" aria-current="page">Leaderboard</a>
+        <a href="/rules.html">Rules</a>
+      </div>
+    </nav>
+
+    <main>
+      <section>
+        <h2>Live leaderboard</h2>
+        <p class="meta" id="status">Loading…</p>
+        <div class="card table-scroll">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Player</th><th>Platform</th><th>Progress</th><th>Stream</th></tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <p class="meta">
+          Progress is based on trophies/achievements earned and refreshes about every 10 minutes.
+          It shows who is closest but does not decide the winner. The winner is confirmed from the
+          100% completion stat shown on stream.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      Not affiliated with, sponsored or endorsed by Rockstar Games or Take-Two Interactive.
+    </footer>
+  </div>
+
+  <script>
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    const PLATFORM = { playstation: "PS5", xbox: "Xbox" };
+
+    async function load() {
+      const status = document.getElementById("status");
+      try {
+        const res = await fetch("/api/leaderboard");
+        if (!res.ok) throw new Error(res.status);
+        const { entrants, count, updatedAt } = await res.json();
+        status.textContent = `${count} player${count === 1 ? "" : "s"} entered · updated ${new Date(updatedAt).toLocaleTimeString()}`;
+        document.getElementById("rows").innerHTML = entrants.length
+          ? entrants.map((e, i) => {
+              const pct = e.progress?.percent;
+              const progress = pct == null
+                ? '<span class="meta">Awaiting launch</span>'
+                : `<div class="bar" title="${e.progress.earned}/${e.progress.total}"><i style="width:${Math.min(100, Math.max(0, Number(pct)))}%"></i></div>
+                   <span class="pct">${Number(pct)}%</span>`;
+              return `<tr>
+                <td class="rank">${i + 1}</td>
+                <td>${esc(e.gamertag)}</td>
+                <td><span class="tag">${PLATFORM[e.platform] ?? ""}</span></td>
+                <td>${progress}</td>
+                <td><a href="${esc(e.streamUrl)}" target="_blank" rel="noopener nofollow">Watch</a></td>
+              </tr>`;
+            }).join("")
+          : '<tr><td colspan="5" class="meta">No entries yet. <a href="/#enter">Be the first.</a></td></tr>';
+      } catch {
+        status.textContent = "Couldn't load the leaderboard. Retrying shortly…";
+      }
+    }
+
+    load();
+    setInterval(load, 60_000);
+  </script>
+</body>
+</html>

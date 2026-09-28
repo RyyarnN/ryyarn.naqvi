@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The 100% Chain</title>
+  <meta name="description" content="Be the first to hit 100% completion on stream and win a custom gold and diamond pendant.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="/">THE 100% CHAIN</a>
+      <div class="links">
+        <a href="/" aria-current="page">Enter</a>
+        <a href="/leaderboard.html">Leaderboard</a>
+        <a href="/rules.html">Rules</a>
+      </div>
+    </nav>
+  </div>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Free to enter · PS5 &amp; Xbox Series X|S</div>
+      <h1>First to 100%<br>wins the chain.</h1>
+      <p class="lede">
+        A custom gold and diamond pendant goes to the first player who reaches 100% completion
+        in Grand Theft Auto VI, live on stream.
+      </p>
+      <div class="countdown" id="countdown" aria-label="Countdown to launch">
+        <div><strong data-unit="d">--</strong><span>Days</span></div>
+        <div><strong data-unit="h">--</strong><span>Hours</span></div>
+        <div><strong data-unit="m">--</strong><span>Min</span></div>
+        <div><strong data-unit="s">--</strong><span>Sec</span></div>
+      </div>
+      <p class="meta" id="countdown-label">until launch, November 19, 2026</p>
+      <p><a class="btn" href="#enter">Enter the challenge</a></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section>
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="card"><span class="num">01</span><h3>Sign up</h3><p>Register your gamertag or PSN ID and your streaming channel below.</p></div>
+        <div class="card"><span class="num">02</span><h3>Go public</h3><p>Set your trophies or achievements to public so the leaderboard can track your progress.</p></div>
+        <div class="card"><span class="num">03</span><h3>Stream the run</h3><p>Play on Twitch, YouTube or Kick. The leaderboard updates every 10 minutes.</p></div>
+        <div class="card"><span class="num">04</span><h3>Show 100%</h3><p>The first verified 100% completion stat shown on stream wins the pendant.</p></div>
+      </div>
+    </section>
+
+    <section id="enter" class="two-col">
+      <div>
+        <h2>Enter the challenge</h2>
+        <p class="meta">
+          Entry is free. No purchase necessary. Open to players 18 and older.
+          Your name and email are kept private. Only your gamertag, platform, stream link and progress
+          appear on the <a href="/leaderboard.html">public leaderboard</a>.
+        </p>
+        <p class="meta">
+          The leaderboard tracks trophies and achievements. The win is confirmed only from the
+          100% completion stat shown on your live stream or VOD. See the <a href="/rules.html">official rules</a>.
+        </p>
+      </div>
+
+      <form class="card" id="signup" novalidate>
+        <div class="field">
+          <label for="name">Full name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required>
+          <div class="error" data-for="name"></div>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+          <div class="error" data-for="email"></div>
+        </div>
+        <fieldset class="field">
+          <legend>Platform</legend>
+          <div class="platforms">
+            <label><input type="radio" name="platform" value="playstation" required> PlayStation 5</label>
+            <label><input type="radio" name="platform" value="xbox"> Xbox Series X|S</label>
+          </div>
+          <div class="error" data-for="platform"></div>
+        </fieldset>
+        <div class="field">
+          <label for="gamertag" id="gamertag-label">Gamertag / PSN ID</label>
+          <input id="gamertag" name="gamertag" type="text" autocomplete="off" spellcheck="false" required>
+          <div class="error" data-for="gamertag"></div>
+        </div>
+        <div class="field">
+          <label for="streamUrl">Stream channel</label>
+          <input id="streamUrl" name="streamUrl" type="url" placeholder="https://twitch.tv/yourname" required>
+          <div class="hint">Twitch, YouTube or Kick.</div>
+          <div class="error" data-for="streamUrl"></div>
+        </div>
+        <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <label class="check"><input type="checkbox" name="publicProfile"> <span>My trophies/achievements are set to public.</span></label>
+        <div class="error" data-for="publicProfile"></div>
+        <label class="check"><input type="checkbox" name="over18"> <span>I am 18 or older.</span></label>
+        <div class="error" data-for="over18"></div>
+        <label class="check"><input type="checkbox" name="acceptRules"> <span>I agree to the <a href="/rules.html" target="_blank">official rules</a>.</span></label>
+        <div class="error" data-for="acceptRules"></div>
+
+        <p class="error" id="form-error" role="alert"></p>
+        <button class="btn" type="submit">Lock in my entry</button>
+      </form>
+    </section>
+  </main>
+
+  <div class="wrap">
+    <footer>
+      Not affiliated with, sponsored or endorsed by Rockstar Games or Take-Two Interactive.
+      Grand Theft Auto is a trademark of Take-Two Interactive Software, Inc.
+    </footer>
+  </div>
+
+  <script>
+    // Countdown to launch (midnight US Eastern, Nov 19 2026).
+    const launch = new Date("2026-11-19T00:00:00-05:00").getTime();
+    const cd = document.getElementById("countdown");
+    function tick() {
+      const diff = launch - Date.now();
+      if (diff <= 0) {
+        cd.hidden = true;
+        document.getElementById("countdown-label").textContent = "The game is out. The race is on.";
+        return;
+      }
+      const parts = {
+        d: Math.floor(diff / 864e5),
+        h: Math.floor(diff / 36e5) % 24,
+        m: Math.floor(diff / 6e4) % 60,
+        s: Math.floor(diff / 1e3) % 60,
+      };
+      for (const [unit, v] of Object.entries(parts))
+        cd.querySelector(`[data-unit="${unit}"]`).textContent = String(v).padStart(2, "0");
+      setTimeout(tick, 1000);
+    }
+    tick();
+
+    // Platform-specific gamertag label.
+    const form = document.getElementById("signup");
+    form.addEventListener("change", (e) => {
+      if (e.target.name !== "platform") return;
+      document.getElementById("gamertag-label").textContent =
+        e.target.value === "playstation" ? "PSN Online ID" : "Xbox gamertag";
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      form.querySelectorAll(".error").forEach((el) => (el.textContent = ""));
+      const fd = new FormData(form);
+      const body = {
+        name: fd.get("name"),
+        email: fd.get("email"),
+        platform: fd.get("platform") ?? "",
+        gamertag: fd.get("gamertag"),
+        streamUrl: fd.get("streamUrl"),
+        company: fd.get("company"),
+        publicProfile: fd.has("publicProfile"),
+        over18: fd.has("over18"),
+        acceptRules: fd.has("acceptRules"),
+      };
+
+      const button = form.querySelector("button");
+      button.disabled = true;
+      try {
+        const res = await fetch("/api/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+          form.innerHTML = `
+            <div class="success">
+              <h3>You're in.</h3>
+              <p class="meta">Keep your trophies/achievements public. You'll appear on the leaderboard
+              once tracking starts at launch.</p>
+              <a class="btn" href="/leaderboard.html">View leaderboard</a>
+            </div>`;
+          return;
+        }
+        if (data.errors) {
+          for (const [field, msg] of Object.entries(data.errors)) {
+            const el = form.querySelector(`.error[data-for="${field}"]`);
+            if (el) el.textContent = msg;
+          }
+        } else {
+          document.getElementById("form-error").textContent = "Something went wrong. Please try again.";
+        }
+      } catch {
+        document.getElementById("form-error").textContent = "Network error. Please try again.";
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

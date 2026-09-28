@@ -1,0 +1,14 @@
+{
+  "name": "the-100-percent-chain",
+  "private": true,
+  "type": "module",
+  "description": "Signup form and live leaderboard for the 100% Chain challenge.",
+  "scripts": {
+    "dev": "netlify dev",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.1",
+    "psn-api": "^2.13.0"
+  }
+}
