@@ -61,8 +61,9 @@ export function validateSignup(input) {
       platform === "playstation"
         ? "PSN IDs are 3–16 characters: letters, numbers, - or _."
         : "Xbox gamertags are up to 15 letters, numbers or spaces.";
-  if (!isStreamUrl(streamUrl))
-    errors.streamUrl = "Link your Twitch, YouTube or Kick channel (https://…).";
+  // Stream channel is optional (not everyone streams). If given, it must be a valid stream URL.
+  if (streamUrl && !isStreamUrl(streamUrl))
+    errors.streamUrl = "Enter a valid Twitch, YouTube or Kick link (https://…), or leave it blank.";
   if (age === null || age > 120) errors.dob = "Enter your date of birth.";
   else if (age < MIN_AGE) errors.dob = `You must be ${MIN_AGE} or older to enter.`;
   if (input.over18 !== true) errors.over18 = "You must confirm you are 18 or older.";
