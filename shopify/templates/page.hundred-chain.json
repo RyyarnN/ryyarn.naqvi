@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "hundred-chain",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

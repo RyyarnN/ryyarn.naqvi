@@ -1,9 +1,11 @@
 import { validateSignup, entrantKey } from "../lib/entrants.js";
 import { entrantsStore } from "../lib/store.js";
+import { CORS_HEADERS, preflight } from "../lib/cors.js";
 
-const json = (body, status = 200) => Response.json(body, { status });
+const json = (body, status = 200) => Response.json(body, { status, headers: CORS_HEADERS });
 
 export default async (req) => {
+  if (req.method === "OPTIONS") return preflight();
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
   let input;

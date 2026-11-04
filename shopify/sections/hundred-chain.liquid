@@ -1,0 +1,304 @@
+{%- comment -%}
+  The 100% Chain: GTA VI 100%-completion pendant challenge.
+  Signups and the leaderboard are served by the Netlify API set in "API address".
+  The official rules are the page's own content (Online Store > Pages).
+{%- endcomment -%}
+
+{{ 'hundred-chain.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'hundred-chain.js' | asset_url }}" defer></script>
+
+{%- liquid
+  assign api_base = section.settings.api_base | default: 'https://the-100-percent-chain.netlify.app' | strip
+  assign rules_html = page.content | strip
+-%}
+
+<div
+  class="hc"
+  id="hc-{{ section.id }}"
+  data-api="{{ api_base | escape }}"
+  data-launch="{{ section.settings.launch_at | escape }}"
+>
+  <header class="hc-hero">
+    <div class="hc-wrap hc-hero-copy">
+      <p class="hc-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      <h1 class="hc-title">First to 100%<br>wins the <em>chain.</em></h1>
+      <p class="hc-lede">{{ section.settings.lede | escape }}</p>
+
+      <div class="hc-countdown" data-countdown aria-label="Countdown to launch">
+        <div><strong data-unit="d">--</strong><span>Days</span></div>
+        <div><strong data-unit="h">--</strong><span>Hours</span></div>
+        <div><strong data-unit="m">--</strong><span>Min</span></div>
+        <div><strong data-unit="s">--</strong><span>Sec</span></div>
+      </div>
+      <p class="hc-countdown-label" data-countdown-label>{{ section.settings.countdown_label | escape }}</p>
+
+      <p class="hc-hero-actions">
+        <a class="hc-btn hc-btn--dark" href="#hc-enter">Enter the challenge</a>
+        <a class="hc-btn hc-btn--ghost" href="#hc-leaderboard">Leaderboard</a>
+      </p>
+    </div>
+
+    {%- if section.settings.hero_image != blank -%}
+      {{ section.settings.hero_image | image_url: width: 2400 | image_tag: class: 'hc-scene', alt: '', loading: 'eager', fetchpriority: 'high', widths: '900, 1200, 1800, 2400', sizes: 'max(100vw, 900px)' }}
+    {%- else -%}
+      <img
+        class="hc-scene"
+        src="{{ 'hundred-chain-hero-1200.jpg' | asset_url }}"
+        srcset="{{ 'hundred-chain-hero-1200.jpg' | asset_url }} 1200w, {{ 'hundred-chain-hero-2400.jpg' | asset_url }} 2400w"
+        sizes="max(100vw, 900px)"
+        width="2400"
+        height="1029"
+        alt=""
+        fetchpriority="high"
+      >
+    {%- endif -%}
+    <div class="hc-waves" aria-hidden="true"><i></i><i></i><i></i></div>
+  </header>
+
+  <nav class="hc-subnav" aria-label="Challenge">
+    <div class="hc-wrap">
+      <a href="#hc-how">How it works</a>
+      {%- if section.settings.pendant_image != blank -%}<a href="#hc-prize">The prize</a>{%- endif -%}
+      <a href="#hc-enter">Enter</a>
+      <a href="#hc-leaderboard">Leaderboard</a>
+      <a href="#hc-rules">Rules</a>
+    </div>
+  </nav>
+
+  <div class="hc-wrap">
+    <section class="hc-section" id="hc-how">
+      <h2 class="hc-h2">How it works</h2>
+      <div class="hc-steps">
+        <div class="hc-card"><span class="hc-num">01</span><h3>Sign up</h3><p>Register your gamertag or PSN ID and your streaming channel below.</p></div>
+        <div class="hc-card"><span class="hc-num">02</span><h3>Go public</h3><p>Set your trophies or achievements to public so the leaderboard can track your progress.</p></div>
+        <div class="hc-card"><span class="hc-num">03</span><h3>Stream the run</h3><p>Play on Twitch, YouTube or Kick. The leaderboard updates every 10 minutes.</p></div>
+        <div class="hc-card"><span class="hc-num">04</span><h3>Show 100%</h3><p>The first verified 100% completion stat shown on stream wins the pendant.</p></div>
+      </div>
+    </section>
+
+    {%- if section.settings.pendant_image != blank -%}
+      <section class="hc-section hc-prize" id="hc-prize">
+        <div class="hc-prize-media">
+          {{ section.settings.pendant_image | image_url: width: 1400 | image_tag: alt: section.settings.pendant_heading, loading: 'lazy', widths: '600, 900, 1400', sizes: '(min-width: 760px) 50vw, 100vw' }}
+        </div>
+        <div class="hc-prize-copy">
+          <h2 class="hc-h2">{{ section.settings.pendant_heading | escape }}</h2>
+          <div class="hc-rte">{{ section.settings.pendant_text }}</div>
+          {%- if section.settings.shop_link != blank -%}
+            <p><a class="hc-btn" href="{{ section.settings.shop_link }}">{{ section.settings.shop_label | escape }}</a></p>
+          {%- endif -%}
+        </div>
+      </section>
+    {%- endif -%}
+
+    <section class="hc-section hc-two-col" id="hc-enter">
+      <div>
+        <h2 class="hc-h2">Enter the challenge</h2>
+        <p class="hc-meta">
+          Entry is free. No purchase necessary. Open to players 18 and older. The winner must show
+          government-issued photo ID before the prize ships. Your name, email and date of birth are kept private.
+          Only your gamertag, platform, stream link and progress appear on the
+          <a href="#hc-leaderboard">public leaderboard</a>.
+        </p>
+        <p class="hc-meta">
+          The leaderboard tracks trophies and achievements. The win is confirmed only from the 100% completion
+          stat shown on your live stream or VOD. See the <a href="#hc-rules" data-open-rules>official rules</a>.
+        </p>
+      </div>
+
+      <form class="hc-card hc-form" data-signup novalidate>
+        <div class="hc-field">
+          <label for="hc-name-{{ section.id }}">Full name</label>
+          <input id="hc-name-{{ section.id }}" name="name" type="text" autocomplete="name" required>
+          <div class="hc-error" data-for="name"></div>
+        </div>
+        <div class="hc-field">
+          <label for="hc-email-{{ section.id }}">Email</label>
+          <input id="hc-email-{{ section.id }}" name="email" type="email" autocomplete="email" required>
+          <div class="hc-error" data-for="email"></div>
+        </div>
+        <div class="hc-field">
+          <label for="hc-dob-{{ section.id }}">Date of birth</label>
+          <input id="hc-dob-{{ section.id }}" name="dob" type="date" autocomplete="bday" required min="1900-01-01">
+          <div class="hc-hint">You must be 18 or older.</div>
+          <div class="hc-error" data-for="dob"></div>
+        </div>
+        <fieldset class="hc-field">
+          <legend>Platform</legend>
+          <div class="hc-platforms">
+            <label><input type="radio" name="platform" value="playstation" required> PlayStation 5</label>
+            <label><input type="radio" name="platform" value="xbox"> Xbox Series X|S</label>
+          </div>
+          <div class="hc-error" data-for="platform"></div>
+        </fieldset>
+        <div class="hc-field">
+          <label for="hc-tag-{{ section.id }}" data-gamertag-label>Gamertag / PSN ID</label>
+          <input id="hc-tag-{{ section.id }}" name="gamertag" type="text" autocomplete="off" spellcheck="false" required>
+          <div class="hc-error" data-for="gamertag"></div>
+        </div>
+        <div class="hc-field">
+          <label for="hc-stream-{{ section.id }}">Stream channel</label>
+          <input id="hc-stream-{{ section.id }}" name="streamUrl" type="url" placeholder="https://twitch.tv/yourname" required>
+          <div class="hc-hint">Twitch, YouTube or Kick.</div>
+          <div class="hc-error" data-for="streamUrl"></div>
+        </div>
+        <input class="hc-hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <label class="hc-check"><input type="checkbox" name="publicProfile"> <span>My trophies/achievements are set to public.</span></label>
+        <div class="hc-error" data-for="publicProfile"></div>
+        <label class="hc-check"><input type="checkbox" name="over18"> <span>I am 18 or older and my date of birth is accurate.</span></label>
+        <div class="hc-error" data-for="over18"></div>
+        <label class="hc-check"><input type="checkbox" name="acceptRules"> <span>I agree to the <a href="#hc-rules" data-open-rules>official rules</a>.</span></label>
+        <div class="hc-error" data-for="acceptRules"></div>
+
+        <p class="hc-error" data-form-error role="alert"></p>
+        <button class="hc-btn" type="submit">Lock in my entry</button>
+      </form>
+    </section>
+
+    <section class="hc-section" id="hc-leaderboard">
+      <h2 class="hc-h2">Live leaderboard</h2>
+      <p class="hc-meta" data-lb-status>Loading…</p>
+      <div class="hc-card hc-table-scroll">
+        <table class="hc-table">
+          <thead>
+            <tr><th>#</th><th>Player</th><th>Platform</th><th>Progress</th><th>Stream</th></tr>
+          </thead>
+          <tbody data-lb-rows></tbody>
+        </table>
+      </div>
+      <p class="hc-meta">
+        Progress is based on trophies/achievements earned and refreshes about every 10 minutes. It shows who is
+        closest but does not decide the winner. The winner is confirmed from the 100% completion stat shown on stream.
+      </p>
+    </section>
+
+    <section class="hc-section" id="hc-rules">
+      <details class="hc-card hc-rules" data-rules>
+        <summary><span class="hc-h2">Official rules</span></summary>
+        <div class="hc-rte hc-prose">
+          {%- if rules_html != blank -%}
+            {{ page.content }}
+          {%- else -%}
+            <p>Official rules coming soon.</p>
+          {%- endif -%}
+        </div>
+      </details>
+    </section>
+
+    <footer class="hc-footer">
+      Not affiliated with, sponsored or endorsed by Rockstar Games or Take-Two Interactive.
+      Grand Theft Auto is a trademark of Take-Two Interactive Software, Inc.
+    </footer>
+  </div>
+
+  {%- unless request.design_mode -%}
+    <dialog class="hc-age-gate" data-age-gate aria-labelledby="hc-age-title-{{ section.id }}">
+      <form method="dialog" novalidate data-age-form>
+        <h2 id="hc-age-title-{{ section.id }}">Confirm your age</h2>
+        <p>This challenge is open only to players 18 and older.</p>
+        <label for="hc-age-dob-{{ section.id }}">Date of birth</label>
+        <input id="hc-age-dob-{{ section.id }}" type="date" required min="1900-01-01">
+        <p class="hc-error" role="alert"></p>
+        <button class="hc-btn hc-btn--dark" type="submit">Continue</button>
+        <small>The winner must show government-issued photo ID before receiving the prize.</small>
+      </form>
+      <div class="hc-denied" hidden data-age-denied>
+        <h2>Sorry</h2>
+        <p>You must be 18 or older to enter this challenge.</p>
+        <a class="hc-btn hc-btn--dark" href="{{ routes.root_url }}">Back to the shop</a>
+      </div>
+    </dialog>
+  {%- endunless -%}
+</div>
+
+{% schema %}
+{
+  "name": "100% Chain challenge",
+  "tag": "section",
+  "class": "hc-section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Challenge"
+    },
+    {
+      "type": "text",
+      "id": "api_base",
+      "label": "API address",
+      "default": "https://the-100-percent-chain.netlify.app",
+      "info": "Where signups and the leaderboard are stored. Don't change unless the backend moves."
+    },
+    {
+      "type": "text",
+      "id": "launch_at",
+      "label": "Launch time",
+      "default": "2026-11-19T00:00:00-05:00",
+      "info": "Countdown target. Format: 2026-11-19T00:00:00-05:00 (midnight US Eastern)."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small heading",
+      "default": "Free to enter · PS5 & Xbox Series X|S · 18+"
+    },
+    {
+      "type": "textarea",
+      "id": "lede",
+      "label": "Intro text",
+      "default": "A custom gold pendant set with sapphires and moissanite goes to the first player who reaches 100% completion in Grand Theft Auto VI, live on stream."
+    },
+    {
+      "type": "text",
+      "id": "countdown_label",
+      "label": "Countdown caption",
+      "default": "until launch, November 19, 2026"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero image",
+      "info": "Optional. Leave empty to use the built-in Miami sunset scene. Use a wide image (2400 × 1030)."
+    },
+    {
+      "type": "header",
+      "content": "The prize"
+    },
+    {
+      "type": "image_picker",
+      "id": "pendant_image",
+      "label": "Pendant image",
+      "info": "The prize section appears once an image is added."
+    },
+    {
+      "type": "text",
+      "id": "pendant_heading",
+      "label": "Heading",
+      "default": "The prize"
+    },
+    {
+      "type": "richtext",
+      "id": "pendant_text",
+      "label": "Description",
+      "default": "<p>A one-of-one 3-inch pendant, handmade in Atlanta by Crescent Jewelers: a hand-painted Miami sunset under a gold street map, framed by pink and blue sapphires in galaxy, mosaic and upside-down settings, with flush-set yellow moissanite stars.</p>"
+    },
+    {
+      "type": "url",
+      "id": "shop_link",
+      "label": "Button link",
+      "info": "For example, your Pendants collection."
+    },
+    {
+      "type": "text",
+      "id": "shop_label",
+      "label": "Button label",
+      "default": "Shop pendants"
+    }
+  ],
+  "presets": [
+    {
+      "name": "100% Chain challenge"
+    }
+  ]
+}
+{% endschema %}
